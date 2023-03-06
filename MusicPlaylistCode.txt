@@ -1,0 +1,82 @@
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Scanner;
+
+public class MusicPlaylist {
+
+    public static String UserName;
+    public static int playlistCapacity;
+
+    //this method will the return the username who is currently logged in.
+    public static String getCurrentSessionUserName()
+    {
+        //fetch username using database query, through API or through UI locator if using Selenium
+        return UserName;
+    }
+
+    //This method will play music based on user's choice
+    public static ArrayList<String> createPlaylist()
+    {
+        Scanner myObj = new Scanner(System.in);
+        System.out.println("Search for Music");
+
+        String musicname = myObj.nextLine();
+        System.out.println("Searching music " + musicname);
+
+        ArrayList<String> playlist = new ArrayList<>(playlistCapacity);
+        playlist.add(musicname);
+
+        //below logic will add new song to mose recent place.i.e 5 position and remove last played song i.e at 1 st position
+        if(playlist.size()>5)
+        {
+            playlist.add(4,musicname);
+            for(int i=playlist.size()-1;i>=0;i--)
+            {
+                playlist.set(i-1 , playlist.get(i-2));
+                playlist.remove(0);
+            }
+
+        }
+        //below will check if music is already in our playlist then it will replace to the last played song and shuffle the remaining positions
+        if(playlist.contains(musicname))
+        {
+            Iterator<String> itr = playlist.iterator();
+            while(itr.hasNext()) {
+                if (itr.equals(musicname)) {
+                    itr.remove();
+                }
+            }
+            playlist.add(4,musicname);
+            for(int i=playlist.size()-1;i>=0;i--)
+            {
+                playlist.set(i-1 , playlist.get(i-2));
+                playlist.remove(0);
+            }
+        }
+
+        // Play music by click on play button using locators if Selenium
+        return playlist;
+    }
+
+    public static HashMap<String,String> linkPlaylistwithUser(String user, ArrayList<String> test)
+    {
+      HashMap<String, String> map = new HashMap<String, String>();
+      ArrayList<String> list = new ArrayList<String>();
+      for(String playlist: list)
+      {
+          map.put(user,playlist);
+      }
+
+      return map;
+    }
+
+    public static void main(String [] args)
+    {
+           String currentUserName = getCurrentSessionUserName();
+           ArrayList<String> playlist =  createPlaylist();
+           linkPlaylistwithUser(currentUserName, playlist);
+    }
+
+}
